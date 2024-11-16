@@ -31,7 +31,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 # Clean the project: remove generated object files and the executable
 clean:
-	rm -rf $(OBJ_DIR) $(TARGET)
+	rm -rf $(OBJ_DIR)
 
 # Phony targets (not actual files)
 .PHONY: all clean debug
