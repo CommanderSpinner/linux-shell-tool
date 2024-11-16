@@ -7,6 +7,7 @@ extern GtkWidget *text_area;
 extern GtkTextBuffer *buffer;
 extern GtkWidget *text_output;
 extern GtkTextBuffer *buffer_output;
+extern GtkWidget *box;
 
 void createWindow(int argc, char** argv);
 
