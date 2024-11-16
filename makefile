@@ -1,5 +1,5 @@
 # Compiler and flags
-CC = gcc
+CC = clang
 CFLAGS = -Wall -g -Iincludes `pkg-config --cflags gtk+-3.0`
 LDFLAGS = `pkg-config --libs gtk+-3.0`
 
@@ -34,4 +34,9 @@ clean:
 	rm -rf $(OBJ_DIR) $(TARGET)
 
 # Phony targets (not actual files)
-.PHONY: all clean
+.PHONY: all clean debug
+
+# Debug target: run the program inside gdb
+debug: $(TARGET)
+	@echo "Running the program inside gdb..."
+	gdb ./$(TARGET)
