@@ -1,8 +1,10 @@
 #include <gtk/gtk.h>
 #include "window.h"
+#include "execute.h"
 #include <stdbool.h>
 
 void callback(GtkWidget *widget, gpointer data);
+void set_text_in_widget(GtkWidget *widget, const gchar *text);
 
 GtkWidget *window;
 GtkWidget *text_area;
@@ -11,6 +13,7 @@ GtkWidget *text_output;
 GtkTextBuffer *buffer_output;
 GtkWidget *box;
 GtkWidget *button;
+struct execute* exec;
 
 void createWindow(int argc, char** argv){
     
@@ -62,5 +65,45 @@ void createWindow(int argc, char** argv){
 
 void callback (GtkWidget *widget, gpointer data)
 {
+    //GtkTextBuffer *buffer_of_button = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_area));
+    GtkTextIter start, end;
+
+    // Setze die Iteratoren auf den Anfang und das Ende des Textes
+    gtk_text_buffer_get_start_iter(buffer, &start);
+    gtk_text_buffer_get_end_iter(buffer, &end);
+
+    // Extrahiere den Text
+    gchar *input = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
+
+    exec->script = (char *) input;
     g_print ("%s\n", (char *) data);
+
+    set_text_in_widget(text_output, exec->script);
+
+    bool success = execute_script(exec);
+
+    if(!success){
+        g_print("Error executing script!");
+    }
+    g_free(input);
+}
+
+void set_text_in_widget(GtkWidget *widget, const gchar *text) {
+    // Überprüfen, ob das Widget ein GtkLabel ist
+    if (GTK_IS_LABEL(widget)) {
+        gtk_label_set_text(GTK_LABEL(widget), text);
+    }
+    // Überprüfen, ob das Widget ein GtkButton ist
+    else if (GTK_IS_BUTTON(widget)) {
+        gtk_button_set_label(GTK_BUTTON(widget), text);
+    }
+    // Überprüfen, ob das Widget ein GtkEntry ist
+    else if (GTK_IS_ENTRY(widget)) {
+        gtk_entry_set_text(GTK_ENTRY(widget), text);
+    }
+    // Überprüfen, ob das Widget ein GtkTextView ist
+    else if (GTK_IS_TEXT_VIEW(widget)) {
+        GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
+        gtk_text_buffer_set_text(buffer, text, -1);
+    }
 }
