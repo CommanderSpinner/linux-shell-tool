@@ -63,8 +63,8 @@ void createWindow(int argc, char** argv){
     gtk_main ();
 }
 
-void callback (GtkWidget *widget, gpointer data)
-{
+void callback (GtkWidget *widget, gpointer data){
+    
     //GtkTextBuffer *buffer_of_button = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_area));
     GtkTextIter start, end;
 
@@ -78,32 +78,21 @@ void callback (GtkWidget *widget, gpointer data)
     exec->script = (char *) input;
     g_print ("%s\n", (char *) data);
 
-    set_text_in_widget(text_output, exec->script);
-
     bool success = execute_script(exec);
 
     if(!success){
-        g_print("Error executing script!");
+        g_print("Error executing script!\n");
+        // Setze Fehlertext im text_output
+        set_text_in_widget(text_output, exec->script);
+    } else {
+        // Wenn das Skript erfolgreich war, zeige die Ausgabe im text_output an
+        set_text_in_widget(text_output, exec->script);
     }
+
     g_free(input);
 }
 
 void set_text_in_widget(GtkWidget *widget, const gchar *text) {
-    // Überprüfen, ob das Widget ein GtkLabel ist
-    if (GTK_IS_LABEL(widget)) {
-        gtk_label_set_text(GTK_LABEL(widget), text);
-    }
-    // Überprüfen, ob das Widget ein GtkButton ist
-    else if (GTK_IS_BUTTON(widget)) {
-        gtk_button_set_label(GTK_BUTTON(widget), text);
-    }
-    // Überprüfen, ob das Widget ein GtkEntry ist
-    else if (GTK_IS_ENTRY(widget)) {
-        gtk_entry_set_text(GTK_ENTRY(widget), text);
-    }
-    // Überprüfen, ob das Widget ein GtkTextView ist
-    else if (GTK_IS_TEXT_VIEW(widget)) {
-        GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
-        gtk_text_buffer_set_text(buffer, text, -1);
-    }
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
+    gtk_text_buffer_set_text(buffer, text, -1);  // Setze den Text im Buffer
 }
