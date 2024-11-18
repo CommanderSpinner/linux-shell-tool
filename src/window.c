@@ -16,21 +16,26 @@ GtkWidget *box;
 GtkWidget *button;
 struct execute *exec;
 
-void createWindow(int argc, char **argv)
+void init_prog(int argc, char **argv, struct execute* exec, GtkWidget *window)
 {
     exec = malloc(sizeof(struct execute));
     if (exec == NULL)
     {
         g_print("Memory allocation failed for exec\n");
-        return 1; // Exit if memory allocation fails
+        exit(1); // Exit if memory allocation fails
     }
 
     gtk_init(&argc, &argv);
     gtk_window_set_title(GTK_WINDOW(window), "shell tool");
-
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
     gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+}
+
+void createWindow(int argc, char **argv)
+{
+    init_prog(argc, argv, exec, window);
+
 
     button = gtk_button_new_with_label("Execute");
     g_signal_connect(button, "clicked", G_CALLBACK(callback),
@@ -114,7 +119,7 @@ int callback(GtkWidget *widget, gpointer data)
 
     // exec->script = input;//errors seg fault
     g_print("casting into struct\n");
-    create_script(exec, sizeof(input));
+    create_script(exec, strlen(input));
     strcpy(exec->script, input);
     // exec->script = g_strdup(input); // Wenn exec->script ein Zeiger auf char
     // ist
