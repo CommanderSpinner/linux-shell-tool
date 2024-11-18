@@ -64,6 +64,7 @@ void createWindow(int argc, char** argv){
 }
 
 int callback (GtkWidget *widget, gpointer data){
+    g_print ("%s\n", (char *) data);
     
     //GtkTextBuffer *buffer_of_button = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_area));
     GtkTextIter start, end;
@@ -84,10 +85,9 @@ int callback (GtkWidget *widget, gpointer data){
     input = input ? input : "input is empty";
     g_print("validating input\n");
 
-    exec->script = input;
-    g_print ("%s\n", (char *) data);
-
-    /*
+    *exec->script = *input;//errors
+    g_print ("casting scrit into struct");
+    
     bool success = execute_script(exec);
     g_print("executing script");
 
@@ -97,7 +97,7 @@ int callback (GtkWidget *widget, gpointer data){
     } else {
         // Wenn das Skript erfolgreich war, zeige die Ausgabe im text_output an
         set_text_in_widget(text_output, exec->script);
-    }*/
+    }
 
     g_free(input);
 
