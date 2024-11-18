@@ -3,7 +3,7 @@
 #include "execute.h"
 #include <stdbool.h>
 
-void callback(GtkWidget *widget, gpointer data);
+int callback(GtkWidget *widget, gpointer data);
 void set_text_in_widget(GtkWidget *widget, const gchar *text);
 
 GtkWidget *window;
@@ -63,10 +63,15 @@ void createWindow(int argc, char** argv){
     gtk_main ();
 }
 
-void callback (GtkWidget *widget, gpointer data){
+int callback (GtkWidget *widget, gpointer data){
     
     //GtkTextBuffer *buffer_of_button = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_area));
     GtkTextIter start, end;
+
+    if (!buffer) {
+        g_print("buffer is empty");
+        return 1;
+    }
 
     // Setze die Iteratoren auf den Anfang und das Ende des Textes
     gtk_text_buffer_get_start_iter(buffer, &start);
@@ -74,22 +79,29 @@ void callback (GtkWidget *widget, gpointer data){
 
     // Extrahiere den Text
     gchar *input = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
+    g_print("getting input\n");
 
-    exec->script = (char *) input;
+    input = input ? input : "input is empty";
+    g_print("validating input\n");
+
+    exec->script = input;
     g_print ("%s\n", (char *) data);
 
+    /*
     bool success = execute_script(exec);
+    g_print("executing script");
 
     if(!success){
         g_print("Error executing script!\n");
         // Setze Fehlertext im text_output
-        set_text_in_widget(text_output, exec->script);
     } else {
         // Wenn das Skript erfolgreich war, zeige die Ausgabe im text_output an
         set_text_in_widget(text_output, exec->script);
-    }
+    }*/
 
     g_free(input);
+
+    return 0;
 }
 
 void set_text_in_widget(GtkWidget *widget, const gchar *text) {
