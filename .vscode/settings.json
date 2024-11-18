@@ -2,6 +2,7 @@
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
         "window.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "execute.h": "c"
     }
 }

@@ -1,7 +1,8 @@
-#include <gtk/gtk.h>
 #include "window.h"
 #include "execute.h"
+#include <gtk/gtk.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 int callback(GtkWidget *widget, gpointer data);
 void set_text_in_widget(GtkWidget *widget, const gchar *text);
@@ -13,19 +14,27 @@ GtkWidget *text_output;
 GtkTextBuffer *buffer_output;
 GtkWidget *box;
 GtkWidget *button;
-struct execute* exec;
+struct execute *exec;
 
-void createWindow(int argc, char** argv){
-    
-    gtk_init (&argc, &argv);
-    gtk_window_set_title (GTK_WINDOW (window), "shell tool");
-        
-    window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+void createWindow(int argc, char **argv)
+{
+    exec = malloc(sizeof(struct execute));
+    if (exec == NULL)
+    {
+        g_print("Memory allocation failed for exec\n");
+        return 1; // Exit if memory allocation fails
+    }
+
+    gtk_init(&argc, &argv);
+    gtk_window_set_title(GTK_WINDOW(window), "shell tool");
+
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-    gtk_window_set_resizable(GTK_WINDOW (window), FALSE);
+    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 
     button = gtk_button_new_with_label("Execute");
-    g_signal_connect(button, "clicked", G_CALLBACK(callback), (gpointer)"execute");
+    g_signal_connect(button, "clicked", G_CALLBACK(callback),
+                     (gpointer) "execute");
 
     // Make the button thinner
     gtk_widget_set_size_request(button, 100, 30);
@@ -40,7 +49,8 @@ void createWindow(int argc, char** argv){
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_area), GTK_WRAP_WORD);
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_output), GTK_WRAP_WORD);
 
-    box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);  // 10px spacing between widgets
+    box =
+        gtk_box_new(GTK_ORIENTATION_VERTICAL, 10); // 10px spacing between widgets
 
     // Add the text_area and text_output to the box
     gtk_box_pack_start(GTK_BOX(box), text_area, TRUE, TRUE, 0);
@@ -52,7 +62,8 @@ void createWindow(int argc, char** argv){
 
     // Connect the destroy signal to gtk_main_quit to exit the program
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-    //g_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (callback), (gpointer) "execute");
+    // g_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC
+    // (callback), (gpointer) "execute");
 
     // make output not editable and cursor invisblea
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text_output), FALSE);
@@ -60,51 +71,78 @@ void createWindow(int argc, char** argv){
 
     // Show the widgets
     gtk_widget_show_all(window);
-    gtk_main ();
+    gtk_main();
 }
 
-int callback (GtkWidget *widget, gpointer data){
-    g_print ("%s\n", (char *) data);
-    
-    //GtkTextBuffer *buffer_of_button = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_area));
+int callback(GtkWidget *widget, gpointer data)
+{
+    g_print("%s\n", (char *)data);
+
+    // GtkTextBuffer *buffer_of_button =
+    // gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_area));
     GtkTextIter start, end;
 
-    if (!buffer) {
+    if (!buffer)
+    {
         g_print("buffer is empty");
         return 1;
     }
+
+    /*
+    if (!exec)
+    {
+        g_print("the struct is NULL!\n");
+        return 1;
+    }
+    */
 
     // Setze die Iteratoren auf den Anfang und das Ende des Textes
     gtk_text_buffer_get_start_iter(buffer, &start);
     gtk_text_buffer_get_end_iter(buffer, &end);
 
     // Extrahiere den Text
-    gchar *input = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
     g_print("getting input\n");
+    gchar *input = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
+    g_print("input: %s\n", input);
 
-    input = input ? input : "input is empty";
     g_print("validating input\n");
+    if (input[0] == '\0')
+    {
+        g_print("input is empty");
+        return 1;
+    }
 
-    *exec->script = *input;//errors
-    g_print ("casting scrit into struct");
-    
-    bool success = execute_script(exec);
+    // exec->script = input;//errors seg fault
+    g_print("casting into struct\n");
+    create_script(exec, sizeof(input));
+    strcpy(exec->script, input);
+    // exec->script = g_strdup(input); // Wenn exec->script ein Zeiger auf char
+    // ist
+    input = NULL;
+
     g_print("executing script");
+    bool success = execute_script(exec);
 
-    if(!success){
+    if (!success)
+    {
         g_print("Error executing script!\n");
         // Setze Fehlertext im text_output
-    } else {
+    }
+    else
+    {
         // Wenn das Skript erfolgreich war, zeige die Ausgabe im text_output an
+        g_print("executing script: %s", exec->script);
         set_text_in_widget(text_output, exec->script);
     }
 
-    g_free(input);
+    // free(exec->script);
+    g_free(exec->script);
 
     return 0;
 }
 
-void set_text_in_widget(GtkWidget *widget, const gchar *text) {
+void set_text_in_widget(GtkWidget *widget, const gchar *text)
+{
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
-    gtk_text_buffer_set_text(buffer, text, -1);  // Setze den Text im Buffer
+    gtk_text_buffer_set_text(buffer, text, -1); // Setze den Text im Buffer
 }
