@@ -1,0 +1,55 @@
+# Compiler and flags
+CC = clang
+CFLAGS = -Wall -g -Iincludes `pkg-config --cflags gtk+-3.0`
+LDFLAGS = `pkg-config --libs gtk+-3.0`
+
+# Directories
+SRC_DIR = src
+INCLUDE_DIR = includes
+OBJ_DIR = obj
+LOG_DIR = debug_utils
+
+# Output executable
+TARGET = shell_tool
+
+# Find all source files (.c) in the src directory
+SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
+
+# Generate object file names from source files
+OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+
+# Default target: build the executable
+all: $(TARGET) run_echo_logs
+
+# Folder for logs (ensure the directory exists)
+$(LOG_DIR):
+	@mkdir -p $(LOG_DIR)
+
+# Link object files to create the executable
+$(TARGET): $(OBJ_FILES) $(LOG_DIR)
+	@echo "Linking object files..."
+	$(CC) $(OBJ_FILES) -o $(TARGET) $(LDFLAGS) > $(LOG_DIR)/link_output.log 2> $(LOG_DIR)/link_error.log
+
+# Rule to compile .c files to .o files with separate logs for each file
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(LOG_DIR)
+	@mkdir -p $(OBJ_DIR)
+	@echo "Compiling $< ..."
+	$(CC) -c $< -o $@ $(CFLAGS) > $(LOG_DIR)/$*.log 2> $(LOG_DIR)/$*-error.log
+
+# Clean the project: remove generated object files and the executable
+clean:
+	rm -rf $(OBJ_DIR)
+	rm -rf $(LOG_DIR)/*.log $(TARGET)
+
+# Phony targets (not actual files)
+.PHONY: all clean debug run_echo_logs
+
+# Debug target: run the program inside gdb
+debug: $(TARGET)
+	@echo "Running the program inside gdb..."
+	gdb ./$(TARGET)
+
+# Target to run the echo_logs.sh script located in the debug_utils folder
+run_echo_logs:
+	@echo "Running echo_logs.sh from $(LOG_DIR)..."
+	$(LOG_DIR)/echo_logs.sh

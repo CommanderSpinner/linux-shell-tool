@@ -4,16 +4,13 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-int callback(GtkWidget *widget, gpointer data);
-void set_text_in_widget(GtkWidget *widget, const gchar *text);
-
 GtkWidget *window;
 GtkWidget *text_area;
 GtkTextBuffer *buffer;
 GtkWidget *text_output;
 GtkTextBuffer *buffer_output;
 GtkWidget *box;
-GtkWidget *button;
+GtkWidget *button_execute;
 struct execute *exec;
 
 void init_prog(int argc, char **argv, struct execute* exec, GtkWidget *window)
@@ -32,17 +29,28 @@ void init_prog(int argc, char **argv, struct execute* exec, GtkWidget *window)
     gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 }
 
+/* old
+void add_button(GtkWidget *button, char* label, (*func) (GCallback)){
+    button = gtk_button_new_with_label(label);
+    g_signal_connect(button, "clicked", (*func)(GCallback), (gpointer) "execute");
+}
+*/
+// new
+void add_button(GtkWidget **button, const char *label, void (*func)(GtkWidget *, gpointer), gpointer data) {
+    // Button erstellen
+    *button = gtk_button_new_with_label(label);
+    
+    // Das "clicked"-Signal des Buttons mit der Callback-Funktion verbinden
+    g_signal_connect(*button, "clicked", G_CALLBACK(func), data);
+}
+
 void createWindow(int argc, char **argv)
 {
     init_prog(argc, argv, exec, window);
 
-
-    button = gtk_button_new_with_label("Execute");
-    g_signal_connect(button, "clicked", G_CALLBACK(callback),
-                     (gpointer) "execute");
-
+    add_button(&button_execute, "Execute", callback, "execute");
     // Make the button thinner
-    gtk_widget_set_size_request(button, 100, 30);
+    gtk_widget_set_size_request(button_execute, 100, 30);
 
     // Create the text buffer and text area
     buffer = gtk_text_buffer_new(NULL);
@@ -60,7 +68,7 @@ void createWindow(int argc, char **argv)
     // Add the text_area and text_output to the box
     gtk_box_pack_start(GTK_BOX(box), text_area, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(box), text_output, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box), button_execute, FALSE, FALSE, 0);
 
     // Add the box to the window container
     gtk_container_add(GTK_CONTAINER(window), box);
