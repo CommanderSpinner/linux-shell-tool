@@ -1,42 +1,40 @@
 # Compiler and flags
-CC = clang
-CFLAGS = -Wall -g -Iincludes `pkg-config --cflags gtk+-3.0`
-LDFLAGS = `pkg-config --libs gtk+-3.0`
+CC := clang
+CFLAGS := -Wall -Iincludes `pkg-config --cflags gtk+-3.0`
+LDFLAGS := `pkg-config --libs gtk+-3.0`
 
 # Directories
-SRC_DIR = src
-INCLUDE_DIR = includes
-OBJ_DIR = obj
+SRC_DIR := src
+OBJ_DIR := obj
+INCLUDES := includes
 
-# Output executable
-TARGET = shell_tool
+# Collect all .c files in the src directory
+SRCS := $(wildcard $(SRC_DIR)/*.c)
 
-# Find all source files (.c) in the src directory
-SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
+# Generate corresponding .o files in the obj directory
+OBJS := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
-# Generate object file names from source files
-OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+# Target executable name
+TARGET := main_program  # Change this to your preferred executable name
 
-# Default target: build the executable
+# Default target
 all: $(TARGET)
 
-# Link object files to create the executable
-$(TARGET): $(OBJ_FILES)
-	$(CC) $(OBJ_FILES) -o $(TARGET) $(LDFLAGS)
+# Link object files to create the final executable
+$(TARGET): $(OBJS)
+	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
 
-# Rule to compile .c files to .o files
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)
-	$(CC) -c $< -o $@ $(CFLAGS)
+# Compile .c files into .o files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Clean the project: remove generated object files and the executable
+# Ensure obj directory exists
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
+
+# Clean up build files
 clean:
-	rm -rf $(OBJ_DIR)
+	rm -rf $(OBJ_DIR) $(TARGET)
 
-# Phony targets (not actual files)
-.PHONY: all clean debug
-
-# Debug target: run the program inside gdb
-debug: $(TARGET)
-	@echo "Running the program inside gdb..."
-	gdb ./$(TARGET)
+# Phony targets to avoid conflicts with file names
+.PHONY: all clean

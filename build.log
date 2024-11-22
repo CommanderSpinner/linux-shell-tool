@@ -1,0 +1,4 @@
+Linking shell_tool...
+clang: error: no such file or directory: 'build/execute.o'
+clang: error: no such file or directory: 'build/main.o'
+clang: error: no such file or directory: 'build/window.o'
