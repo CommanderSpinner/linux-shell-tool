@@ -37,8 +37,8 @@ void createWindow(int argc, char **argv)
 {
     init_prog(argc, argv, exec, window);
 
-    button = gtk_button_new_with_label("Execute");
-    g_signal_connect(*button, "clicked", G_CALLBACK(callback), (gpointer)"execute"); 
+    button_execute = gtk_button_new_with_label("Execute");
+    g_signal_connect(button_execute, "clicked", G_CALLBACK(callback), (gpointer)"execute"); 
     // Make the button thinner
     gtk_widget_set_size_request(button_execute, 100, 30);
 
