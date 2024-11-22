@@ -29,26 +29,16 @@ void init_prog(int argc, char **argv, struct execute* exec, GtkWidget *window)
     gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 }
 
-/* old
-void add_button(GtkWidget *button, char* label, (*func) (GCallback)){
-    button = gtk_button_new_with_label(label);
-    g_signal_connect(button, "clicked", (*func)(GCallback), (gpointer) "execute");
-}
-*/
-// new
-void add_button(GtkWidget **button, const char *label, void (*func)(GtkWidget *, gpointer), gpointer data) {
-    // Button erstellen
-    *button = gtk_button_new_with_label(label);
-    
-    // Das "clicked"-Signal des Buttons mit der Callback-Funktion verbinden
-    g_signal_connect(*button, "clicked", G_CALLBACK(func), data);
+void add_button(GtkWidget **button, const char *label, GCallback func) {
+      // Create a button and assign to the pointer // Connect the signal
 }
 
 void createWindow(int argc, char **argv)
 {
     init_prog(argc, argv, exec, window);
 
-    add_button(&button_execute, "Execute", callback, "execute");
+    button = gtk_button_new_with_label("Execute");
+    g_signal_connect(*button, "clicked", G_CALLBACK(callback), (gpointer)"execute"); 
     // Make the button thinner
     gtk_widget_set_size_request(button_execute, 100, 30);
 
