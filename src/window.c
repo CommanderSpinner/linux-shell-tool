@@ -91,13 +91,13 @@ int callback(GtkWidget *widget, gpointer data)
         return 1;
     }
 
-    /*
+    
     if (!exec)
     {
         g_print("the struct is NULL!\n");
         return 1;
     }
-    */
+    
 
     // Setze die Iteratoren auf den Anfang und das Ende des Textes
     gtk_text_buffer_get_start_iter(buffer, &start);
