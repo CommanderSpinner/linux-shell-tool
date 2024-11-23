@@ -26,19 +26,20 @@ void init_prog(int argc, char **argv, struct execute **exec, GtkWidget **window)
     gtk_window_set_resizable(GTK_WINDOW(*window), FALSE);
 
     // Allocate memory for the execute structure
-    if(!allocateExec(exec))
-    {
-        g_print("failed allocaiting memory for exec");
-        exit(1);
-    }
+    allocateExec(exec);
+}
+
+void create_button(GtkWidget** button, char* label)
+{
+    *button = gtk_button_new_with_label(label);
+    g_signal_connect(button, "clicked", G_CALLBACK(callback), (gpointer)"execute");
 }
 
 void createWindow(int argc, char **argv)
 {
     init_prog(argc, argv, &exec, &window);
 
-    button_execute = gtk_button_new_with_label("Execute");
-    g_signal_connect(button_execute, "clicked", G_CALLBACK(callback), (gpointer)"execute");
+    create_button(&button_execute, "execute");
 
     // Make the button thinner
     gtk_widget_set_size_request(button_execute, 100, 30);
@@ -46,7 +47,6 @@ void createWindow(int argc, char **argv)
     // Create the text buffer and text area
     buffer = gtk_text_buffer_new(NULL);
     buffer_output = gtk_text_buffer_new(NULL);
-
     text_area = gtk_text_view_new_with_buffer(buffer);
     text_output = gtk_text_view_new_with_buffer(buffer_output);
 

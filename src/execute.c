@@ -23,7 +23,7 @@ void create_script(struct execute *exec, unsigned int size) {
     }
 }
 
-bool allocateExec(struct execute** exec){
+void allocateExec(struct execute** exec){
     exec = malloc(sizeof(struct execute));
     if (exec == NULL)
     {
