@@ -13,32 +13,33 @@ GtkWidget *box;
 GtkWidget *button_execute;
 struct execute *exec;
 
-void init_prog(int argc, char **argv, struct execute* exec, GtkWidget *window)
+void init_prog(int argc, char **argv, struct execute **exec, GtkWidget **window)
 {
-    exec = malloc(sizeof(struct execute));
-    if (exec == NULL)
+    gtk_init(&argc, &argv);  // Initialize GTK
+
+    // Create a new top-level window and set the window pointer
+    *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+    // Set window properties
+    gtk_window_set_title(GTK_WINDOW(*window), "shell tool");
+    gtk_window_set_default_size(GTK_WINDOW(*window), 800, 600);
+    gtk_window_set_resizable(GTK_WINDOW(*window), FALSE);
+
+    // Allocate memory for the execute structure
+    if(!allocateExec(exec))
     {
-        g_print("Memory allocation failed for exec\n");
-        exit(1); // Exit if memory allocation fails
+        g_print("failed allocaiting memory for exec");
+        exit(1);
     }
-
-    gtk_init(&argc, &argv);
-    gtk_window_set_title(GTK_WINDOW(window), "shell tool");
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
-}
-
-void add_button(GtkWidget **button, const char *label, GCallback func) {
-      // Create a button and assign to the pointer // Connect the signal
 }
 
 void createWindow(int argc, char **argv)
 {
-    init_prog(argc, argv, exec, window);
+    init_prog(argc, argv, &exec, &window);
 
     button_execute = gtk_button_new_with_label("Execute");
-    g_signal_connect(button_execute, "clicked", G_CALLBACK(callback), (gpointer)"execute"); 
+    g_signal_connect(button_execute, "clicked", G_CALLBACK(callback), (gpointer)"execute");
+
     // Make the button thinner
     gtk_widget_set_size_request(button_execute, 100, 30);
 
@@ -52,8 +53,7 @@ void createWindow(int argc, char **argv)
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_area), GTK_WRAP_WORD);
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_output), GTK_WRAP_WORD);
 
-    box =
-        gtk_box_new(GTK_ORIENTATION_VERTICAL, 10); // 10px spacing between widgets
+    box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);  // 10px spacing between widgets
 
     // Add the text_area and text_output to the box
     gtk_box_pack_start(GTK_BOX(box), text_area, TRUE, TRUE, 0);
@@ -65,8 +65,7 @@ void createWindow(int argc, char **argv)
 
     // Connect the destroy signal to gtk_main_quit to exit the program
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-    // g_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC
-    // (callback), (gpointer) "execute");
+    //g_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (callback), (gpointer) "execute");
 
     // make output not editable and cursor invisblea
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text_output), FALSE);
@@ -74,7 +73,7 @@ void createWindow(int argc, char **argv)
 
     // Show the widgets
     gtk_widget_show_all(window);
-    gtk_main();
+    gtk_main ();
 }
 
 int callback(GtkWidget *widget, gpointer data)

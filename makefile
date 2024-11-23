@@ -22,7 +22,7 @@ all: $(TARGET)
 
 # Link object files to create the executable
 $(TARGET): $(OBJ_FILES)
-	$(CC) $(OBJ_FILES) -o $(TARGET) $(LDFLAGS)
+	$(CC) $(OBJ_FILES) -o $(TARGET) $(LDFLAGS) -g
 
 # Rule to compile .c files to .o files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
