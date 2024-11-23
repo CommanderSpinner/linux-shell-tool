@@ -26,7 +26,6 @@ void init_prog(int argc, char **argv, struct execute **exec, GtkWidget **window)
     gtk_window_set_resizable(GTK_WINDOW(*window), FALSE);
 
     // Allocate memory for the execute structure
-    allocateExec(exec);
 }
 
 void createWindow(int argc, char **argv)
@@ -78,6 +77,7 @@ int callback(GtkWidget *widget, gpointer data)
     // GtkTextBuffer *buffer_of_button =
     // gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_area));
     GtkTextIter start, end;
+    allocateExec(&exec);
 
     if (!buffer)
     {
@@ -89,7 +89,6 @@ int callback(GtkWidget *widget, gpointer data)
     if (!exec)
     {
         g_print("the struct is NULL!\n");
-        return 1;
     }
     
     // Setze die Iteratoren auf den Anfang und das Ende des Textes
@@ -116,7 +115,7 @@ int callback(GtkWidget *widget, gpointer data)
     // ist
     input = NULL;
 
-    g_print("executing script");
+    g_print("executing script:\n%s\n", exec->script);
     bool success = execute_script(exec);
 
     if (!success)
@@ -126,13 +125,13 @@ int callback(GtkWidget *widget, gpointer data)
     }
     else
     {
-        // Wenn das Skript erfolgreich war, zeige die Ausgabe im text_output an
-        g_print("executing script: %s", exec->script);
         set_text_in_widget(text_output, exec->script);
+        g_print("\n");
     }
 
     // free(exec->script);
     g_free(exec->script);
+    free(exec);
 
     return 0;
 }

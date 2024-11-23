@@ -24,7 +24,7 @@ void create_script(struct execute *exec, unsigned int size) {
 }
 
 void allocateExec(struct execute** exec){
-    exec = malloc(sizeof(struct execute));
+    *exec = malloc(sizeof(struct execute));
     if (exec == NULL)
     {
         g_print("Memory allocation failed for exec\n");
