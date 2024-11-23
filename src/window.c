@@ -29,17 +29,12 @@ void init_prog(int argc, char **argv, struct execute **exec, GtkWidget **window)
     allocateExec(exec);
 }
 
-void create_button(GtkWidget** button, char* label)
-{
-    *button = gtk_button_new_with_label(label);
-    g_signal_connect(button, "clicked", G_CALLBACK(callback), (gpointer)"execute");
-}
-
 void createWindow(int argc, char **argv)
 {
     init_prog(argc, argv, &exec, &window);
 
-    create_button(&button_execute, "execute");
+    button_execute = gtk_button_new_with_label("execute");
+    g_signal_connect(button_execute, "clicked", G_CALLBACK(callback), (gpointer) "execute");
 
     // Make the button thinner
     gtk_widget_set_size_request(button_execute, 100, 30);
@@ -97,7 +92,6 @@ int callback(GtkWidget *widget, gpointer data)
         return 1;
     }
     
-
     // Setze die Iteratoren auf den Anfang und das Ende des Textes
     gtk_text_buffer_get_start_iter(buffer, &start);
     gtk_text_buffer_get_end_iter(buffer, &end);
