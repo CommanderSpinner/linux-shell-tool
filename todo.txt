@@ -1,3 +1,4 @@
-finnish execute struct
 finnish gui?
+translate comments to english
+bug fixes
 
