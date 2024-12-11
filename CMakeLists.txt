@@ -19,10 +19,10 @@ include_directories(${INCLUDE_DIR} ${GTK3_INCLUDE_DIRS})
 file(GLOB SOURCES "${SRC_DIR}/*.c")
 
 # Create an executable
-add_executable(my_project ${SOURCES})
+add_executable(linux-shell-tool ${SOURCES})
 
 # Link the GTK3 libraries to your executable
-target_link_libraries(my_project ${GTK3_LIBRARIES})
+target_link_libraries(linux-shell-tool ${GTK3_LIBRARIES})
 
 # Optionally, set additional compiler flags for GTK3
-target_compile_options(my_project PRIVATE ${GTK3_CFLAGS_OTHER})
+target_compile_options(linux-shell-tool PRIVATE ${GTK3_CFLAGS_OTHER})
