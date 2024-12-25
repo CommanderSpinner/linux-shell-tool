@@ -16,8 +16,6 @@ bool execute_script(struct execute *exec) {
     system(exec->lines_of_script[i]);
   }
 
-  free(exec->lines_of_script);
-
   return true;
 }
 
@@ -61,4 +59,10 @@ void create_exec(struct execute** exec){
         g_print("Memory allocation failed for exec\n");
         exit(1); // Exit if memory allocation fails
     }
+}
+
+void cleanup_script(struct execute* exec){
+    free(exec->lines_of_script);
+    free(exec->script);
+    free(exec);
 }

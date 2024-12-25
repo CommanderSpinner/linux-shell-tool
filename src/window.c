@@ -118,14 +118,57 @@ int callback(GtkWidget *widget, gpointer data)
     }
     else
     {
+        int total_length = 0;
+        printf("count_lines: %d", exec->count_lines);
 
-        set_text_in_widget(text_output, exec->script);
+        // First, calculate the total length of all lines
+        for (int i = 0; i < exec->count_lines; i++) {
+            total_length += strlen(exec->lines_of_script[i]);  // Add length of each line
+            total_length++; // for newline chars
+        }
+
+        // Allocate memory for the output string (including space for the null terminator)
+        char* output = malloc(total_length + 1);  // +1 for the null terminator
+        if (output == NULL) {
+            // Handle memory allocation failure
+            g_print("Memory allocation failed\n");
+            return -1;
+        }
+
+        output[0] = '\0';  // Initialize the string to be empty
+
+        // Concatenate each line into the output buffer
+        for (int i = 0; i < exec->count_lines; i++) {
+            strcat(output, exec->lines_of_script[i]);  // Append each line to output
+            strcat(output, "\n");
+        }
+
+        // Set text in the widget and debug print
+        set_text_in_widget(text_output, output);
+        //g_print("%s\n", exec->script);  // Debugging the original script
+
+        // Free the allocated memory after use
+        free(output);
+
+        /*
+        int total_length = 0;
+        for(int i = 0; i < exec->count_lines; i++){
+            total_length += strlen(exec->lines_of_script[i]);  // Add length of each line
+        }
+
+        // Allocate memory for the output string (including space for the null terminator)
+        char* output = malloc(total_length + 1);
+        for(int i = 0; i < exec->count_lines; i++){
+            strcat(output, exec->lines_of_script[i]);
+        }
+        set_text_in_widget(text_output, output);
         g_print("%s\n", exec->script); // debug stuff! ----
+        free(output);
+        */
     }
 
-    // free(exec->script);
-    g_free(exec->script);
-    free(exec);
+
+    cleanup_script(exec);
 
     return 0;
 }
