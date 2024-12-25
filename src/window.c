@@ -17,7 +17,6 @@ void init_prog(int argc, char **argv, struct execute **exec, GtkWidget **window)
 {
 	gtk_init(&argc, &argv);	// Initialize GTK
 
-	// Create a new top-level window and set the window pointer
 	*window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
 	// Set window properties
@@ -26,7 +25,7 @@ void init_prog(int argc, char **argv, struct execute **exec, GtkWidget **window)
 	gtk_window_set_resizable(GTK_WINDOW(*window), FALSE);
 }
 
-void createWindow(int argc, char **argv)
+void run_programm(int argc, char **argv)
 {
 	init_prog(argc, argv, &exec, &window);
 
@@ -34,7 +33,6 @@ void createWindow(int argc, char **argv)
 	g_signal_connect(button_execute, "clicked", G_CALLBACK(callback),
 			 (gpointer) "execute");
 
-	// Make the button thinner
 	gtk_widget_set_size_request(button_execute, 100, 30);
 
 	// Create the text buffer and text area
@@ -72,8 +70,6 @@ int callback(GtkWidget *widget, gpointer data)
 {
 	//g_print("%s\n", (char *)data);
 
-	// GtkTextBuffer *buffer_of_button =
-	// gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_area));
 	GtkTextIter start, end;
 	create_exec(&exec);
 
@@ -85,6 +81,7 @@ int callback(GtkWidget *widget, gpointer data)
 	if (!exec) {
 		g_print("the struct is NULL!\n");
 	}
+
 	// set buffers
 	gtk_text_buffer_get_start_iter(buffer, &start);
 	gtk_text_buffer_get_end_iter(buffer, &end);
@@ -113,7 +110,7 @@ int callback(GtkWidget *widget, gpointer data)
 		int total_length = 0;
 		printf("count_lines: %d", exec->count_lines);
 
-		// First, calculate the total length of all lines
+		// calculate the total length of all lines
 		for (int i = 0; i < exec->count_lines; i++) {
 			total_length += strlen(exec->lines_of_script[i]);	// Add length of each line
 			total_length++;	// for newline chars
@@ -122,7 +119,6 @@ int callback(GtkWidget *widget, gpointer data)
 		// Allocate memory for the output string (including space for the null terminator)
 		char *output = malloc(total_length + 1);	// +1 for the null terminator
 		if (output == NULL) {
-			// Handle memory allocation failure
 			g_print("Memory allocation failed\n");
 			return -1;
 		}
@@ -137,26 +133,10 @@ int callback(GtkWidget *widget, gpointer data)
 
 		// Set text in the widget and debug print
 		set_text_in_widget(text_output, output);
-		//g_print("%s\n", exec->script);  // Debugging the original script
+		//g_print("%s\n", exec->script);
 
 		// Free the allocated memory after use
 		free(output);
-
-		/*
-		   int total_length = 0;
-		   for(int i = 0; i < exec->count_lines; i++){
-		   total_length += strlen(exec->lines_of_script[i]);  // Add length of each line
-		   }
-
-		   // Allocate memory for the output string (including space for the null terminator)
-		   char* output = malloc(total_length + 1);
-		   for(int i = 0; i < exec->count_lines; i++){
-		   strcat(output, exec->lines_of_script[i]);
-		   }
-		   set_text_in_widget(text_output, output);
-		   g_print("%s\n", exec->script); // debug stuff! ----
-		   free(output);
-		 */
 	}
 
 	cleanup_script(exec);

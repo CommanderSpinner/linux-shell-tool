@@ -31,20 +31,6 @@ void split_script_lines(struct execute *exec)
 	}
 }
 
-/*
-void split_script_lines(struct execute *exec){
-  char *line = malloc(strlen(exec->script) * sizeof(char));
-
-  line = strtok(exec->script, "\n");
-  while (line != NULL) {
-    exec->count_lines++;
-    exec->lines_of_script = &line;
-    line = strtok(NULL, "\n");
-  }
-
-}
-*/
-
 void create_script(struct execute *exec, unsigned int size)
 {
 	exec->script = malloc(size + 1);

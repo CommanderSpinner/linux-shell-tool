@@ -12,9 +12,8 @@ extern GtkWidget *button;
 extern GtkWidget *box;
 extern struct execute *exec;
 
-void createWindow(int argc, char **argv);
-void init_prog(int argc, char **argv, struct execute **exec,
-	       GtkWidget ** window);
+void run_programm(int argc, char **argv);
+void init_prog(int argc, char **argv, struct execute **exec, GtkWidget ** window);
 void set_text_in_widget(GtkWidget * widget, const gchar * text);
 int callback(GtkWidget * widget, gpointer data);
 
