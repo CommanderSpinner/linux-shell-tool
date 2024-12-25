@@ -3,6 +3,6 @@
 
 int main(int argc, char *argv[])
 {
-	createWindow(argc, argv);
+	run_programm(argc, argv);
 	return 0;
 }
