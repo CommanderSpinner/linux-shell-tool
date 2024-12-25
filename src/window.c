@@ -107,40 +107,50 @@ int callback(GtkWidget *widget, gpointer data)
 	if (!success) {
 		g_print("Error executing script!\n");
 	} else {
-		int total_length = 0;
-		printf("count_lines: %d", exec->count_lines);
-
-		// calculate the total length of all lines
-		for (int i = 0; i < exec->count_lines; i++) {
-			total_length += strlen(exec->lines_of_script[i]);	// Add length of each line
-			total_length++;	// for newline chars
+		if(update_label_of_output(exec, text_output) != 0){
+			g_print("something went wrong");
 		}
-
-		// Allocate memory for the output string (including space for the null terminator)
-		char *output = malloc(total_length + 1);	// +1 for the null terminator
-		if (output == NULL) {
-			g_print("Memory allocation failed\n");
-			return -1;
-		}
-
-		output[0] = '\0';	// Initialize the string to be empty
-
-		// Concatenate each line into the output buffer
-		for (int i = 0; i < exec->count_lines; i++) {
-			strcat(output, exec->lines_of_script[i]);	// Append each line to output
-			strcat(output, "\n");
-		}
-
-		// Set text in the widget and debug print
-		set_text_in_widget(text_output, output);
-		//g_print("%s\n", exec->script);
-
-		// Free the allocated memory after use
-		free(output);
 	}
 
 	cleanup_script(exec);
+	exec = NULL;
 
+	return 0;
+}
+
+int update_label_of_output(struct execute *exec, GtkWidget* text_output)
+{
+	int total_length = 0;
+	printf("count_lines: %d", exec->count_lines);
+
+	// calculate the total length of all lines
+	for (int i = 0; i < exec->count_lines; i++) {
+		total_length += strlen(exec->lines_of_script[i]);	// Add length of each line
+		total_length++;	// for newline chars
+	}
+
+	// Allocate memory for the output string (including space for the null terminator)
+	char *output = malloc(total_length + 1);	// +1 for the null terminator
+	if (output == NULL) {
+		g_print("Memory allocation failed\n");
+		return -1;
+	}
+
+	output[0] = '\0';	// Initialize the string to be empty
+
+	// Concatenate each line into the output buffer
+	for (int i = 0; i < exec->count_lines; i++) {
+		strcat(output, exec->lines_of_script[i]);	// Append each line to output
+		strcat(output, "\n");
+	}
+
+	// Set text in the widget and debug print
+	set_text_in_widget(text_output, output);
+	//g_print("%s\n", exec->script);
+
+	// Free the allocated memory after use
+	free(output);
+	output = NULL;
 	return 0;
 }
 

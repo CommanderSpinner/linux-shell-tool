@@ -16,5 +16,6 @@ void run_programm(int argc, char **argv);
 void init_prog(int argc, char **argv, GtkWidget ** window);
 void set_text_in_widget(GtkWidget * widget, const gchar * text);
 int callback(GtkWidget * widget, gpointer data);
+int update_label_of_output(struct execute *exec, GtkWidget* label);
 
 #endif
