@@ -13,7 +13,7 @@ GtkWidget *box;
 GtkWidget *button_execute;
 struct execute *exec;
 
-void init_prog(int argc, char **argv, struct execute **exec, GtkWidget **window)
+void init_prog(int argc, char **argv, GtkWidget **window)
 {
 	gtk_init(&argc, &argv);	// Initialize GTK
 
@@ -27,7 +27,7 @@ void init_prog(int argc, char **argv, struct execute **exec, GtkWidget **window)
 
 void run_programm(int argc, char **argv)
 {
-	init_prog(argc, argv, &exec, &window);
+	init_prog(argc, argv, &window);
 
 	button_execute = gtk_button_new_with_label("execute");
 	g_signal_connect(button_execute, "clicked", G_CALLBACK(callback),
