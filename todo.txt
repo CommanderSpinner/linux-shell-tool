@@ -1,4 +1,0 @@
-finnish gui?
-translate comments to english
-bug fixes
-
