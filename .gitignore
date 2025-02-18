@@ -22,3 +22,4 @@ build/CMakeFiles/TargetDirectories.txt
 build/compile_commands.json
 build/
 *.o
+shell_tool

@@ -99,7 +99,7 @@ int callback(GtkWidget *widget, gpointer data)
 	//g_print("casting into struct\n");
 	create_script(exec, strlen(input));
 	strcpy(exec->script, input);
-	input = NULL;
+
 
 	//g_print("executing script:\n%s\n", exec->script);
 	bool success = execute_script(exec);
@@ -112,8 +112,10 @@ int callback(GtkWidget *widget, gpointer data)
 		}
 	}
 
+	g_free(input);
 	cleanup_script(exec);
 	exec = NULL;
+	input = NULL;
 
 	return 0;
 }

@@ -52,7 +52,11 @@ void create_exec(struct execute **exec)
 
 void cleanup_script(struct execute *exec)
 {
-	free(exec->lines_of_script);
+	//free each line of the script
+	for (int i = 0; i < exec->count_lines; i++) {
+		free(exec->lines_of_script[i]);
+	}
+
 	free(exec->script);
 	free(exec);
 }
