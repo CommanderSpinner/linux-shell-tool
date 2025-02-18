@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <gtk/gtk.h>
 
+#define MAX_LINES 100
+
 bool execute_script(struct execute *exec)
 {
 	if (exec == NULL) {
@@ -25,21 +27,40 @@ void split_script_lines(struct execute *exec)
 	exec->count_lines = 0;
 
 	while (line != NULL) {
+		if (exec->count_lines >= MAX_LINES) {
+			fprintf(stderr, "Too many script lines, increase MAX_LINES\n");
+			break;  // Avoid buffer overflow
+		}
+
+		exec->lines_of_script[exec->count_lines] = strdup(line); // Store a copy of the line
+		if (exec->lines_of_script[exec->count_lines] == NULL) {
+			fprintf(stderr, "Memory allocation failed for script line\n");
+			break;
+		}
+
 		exec->count_lines++;
-		exec->lines_of_script[exec->count_lines - 1] = line;	// Store the line in the array
 		line = strtok(NULL, "\n");
 	}
 }
 
+
 void create_script(struct execute *exec, unsigned int size)
 {
-	exec->script = malloc(size + 1);
+	exec->script = malloc(size + 1);  // Allocate memory for the script text
 	if (exec->script == NULL) {
 		fprintf(stderr, "Memory allocation failed for script\n");
 		exit(1);
 	}
-	exec->lines_of_script = malloc(strlen(exec->script) * sizeof(char));
+
+	// Allocate memory for the array of line pointers
+	exec->lines_of_script = malloc(sizeof(char *) * MAX_LINES); // 500 is max lines
+	if (exec->lines_of_script == NULL) {
+		fprintf(stderr, "Memory allocation failed for script lines\n");
+		free(exec->script);  // Free script memory before exiting
+		exit(1);
+	}
 }
+
 
 void create_exec(struct execute **exec)
 {
